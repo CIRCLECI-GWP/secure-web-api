@@ -7,7 +7,7 @@ app.get("/health", (req, res) => {
 });
 
 app.get("/api/users", (req, res) => {
-  res.json({ users: ["alice", "bob", "charlie"] });
+  res.json({ users: ["alice", "bob", "charlie", "oluyemi"] });
 });
 
 // Only start the server if this file is run directly, not when imported
