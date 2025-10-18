@@ -28,12 +28,14 @@ jobs:
 
   deploy-prod:
     docker:
-      - image: cimg/aws:2023.06
+      - image: cimg/node:18.20
     steps:
-      - checkout
+      - attach_workspace:
+          at: .
       - aws-cli/setup:
-          role-arn: "${AWS_ROLE_ARN}"
-          region: "${AWS_REGION}"
+          role_arn: $AWS_ROLE_ARN
+          region: $AWS_REGION
+          role_session_name: "CircleCI-Deploy-Session"
       - run:
           name: Deploy to production with OIDC
           command: |
