@@ -1,0 +1,53 @@
+version: 2.1
+
+jobs:
+  test:
+    docker:
+      - image: cimg/node:18.20
+    steps:
+      - checkout
+      - run: npm install
+      - run: npm test
+
+  security-scan:
+    docker:
+      - image: cimg/node:18.20
+    steps:
+      - checkout
+      - run: npm install
+      - run: npm audit
+
+  deploy-dev:
+    docker:
+      - image: cimg/node:18.20
+    steps:
+      - run: echo "Deploying to development environment..."
+
+  deploy-prod:
+    docker:
+      - image: cimg/node:18.20
+    steps:
+      - run: echo "Deploying to production environment..."
+
+workflows:
+  build-test-deploy:
+    jobs:
+      - test
+      - security-scan:
+          context: security
+      - deploy-dev:
+          context: deployment-dev
+          requires:
+            - test
+            - security-scan
+          filters:
+            branches:
+              only: main
+      - approve-for-prod:
+          type: approval
+          requires:
+            - deploy-dev
+      - deploy-prod:
+          context: release-prod
+          requires:
+            - approve-for-prod
