@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  aws-cli: circleci/aws-cli@5.1.1
+
 jobs:
   test:
     docker:
@@ -25,9 +28,17 @@ jobs:
 
   deploy-prod:
     docker:
-      - image: cimg/node:18.20
+      - image: cimg/aws:2023.06
     steps:
-      - run: echo "Deploying to production environment..."
+      - checkout
+      - aws-cli/setup:
+          role-arn: "${AWS_ROLE_ARN}"
+          region: "${AWS_REGION}"
+      - run:
+          name: Deploy to production with OIDC
+          command: |
+            echo "Deploying to production using OIDC authentication..."
+            # Example: aws s3 sync ./dist s3://my-app-bucket
 
 workflows:
   build-test-deploy:
