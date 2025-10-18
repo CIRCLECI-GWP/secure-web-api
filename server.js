@@ -10,8 +10,11 @@ app.get("/api/users", (req, res) => {
   res.json({ users: ["alice", "bob", "charlie"] });
 });
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+// Only start the server if this file is run directly, not when imported
+if (require.main === module) {
+  app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+  });
+}
 
 module.exports = app;
